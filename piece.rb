@@ -52,46 +52,39 @@ class Piece
       @grid[end_pos] = @grid[@pos]
       @grid[@pos] = nil
       @pos = end_pos
+      maybe_promote
     else
       false
     end
 
-    maybe_promote
+
   end
 
   def perform_jump(end_pos)
     return "that's no on the board!" unless valid_move?(end_pos)
     return "there's already a piece there" unless @grid[end_pos].nil?
 
-    jumps = move_dirs.map {|arr| arr.map { |el| el*2}}
-
     sy, sx = pos
 
-    #find if enemy nearby:
-    # jump_dirs = []
-    # move_dirs.each do |potential_dir|
-    #   dy, dx = potential_dir
-    #   scoped_move = [sy + dy, sx + dx]
-    #   if @grid[scoped_move] != nil && @grid[scoped_move].color != color
-    #     jump_dirs << [sy + (dy*2), sx + (dx*2)] #adds
-    #   end
-    # end
-
-    #find potential jump positions
-    jumps.each do |potential_dir|
+    jump_dirs_pairs = []
+    move_dirs.each do |potential_dir|
       dy, dx = potential_dir
-      potential_moves << [sy + dy, sx + dx]
+      scoped_move = [sy + dy, sx + dx]
+      if @grid[scoped_move] != nil && @grid[scoped_move].color != color
+        jump_dirs_pairs << [[sy + (dy*2), sx + (dx*2)], [sy + dy, sx + dx]] #first position is jumping coordinate, second is thing it's jumping over
+      end
     end
-    #
-    if potential_moves.include?(end_pos)
-      @grid[end_pos] = @grid[@pos]
-      @grid[@pos] = nil
-      @pos = end_pos
-    else
-      false
+
+    jump_dirs_pairs.each do |pair|
+      if pair[0] == end_pos #if potential jumping position matches end_pos
+        @grid[end_pos] = @grid[@pos]
+        @grid[@pos] = nil
+        @grid[pair[1]] = nil #get rid of piece that got jumped over
+        @pos = end_pos
+        maybe_promote
+      end
     end
-    #   #check if peice in between
-    # end
+
   end
 
   def maybe_promote
@@ -104,3 +97,6 @@ class Piece
     "the checker at #{@pos} is #{@color}"
   end
 end
+
+
+#jumps = move_dirs.map {|arr| arr.map { |el| el*2}}

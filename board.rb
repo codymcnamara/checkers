@@ -61,7 +61,7 @@ class Board
         end
       end
     end
-
+    puts
   end
 
 
@@ -79,4 +79,6 @@ a.render
 a[[3,1]].perform_slide([4,2])
 a.render
 a[[5,1]].perform_jump([3,3])
+a.render
+a[[2,2]].perform_jump([4,4])
 a.render
