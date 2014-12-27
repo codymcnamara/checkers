@@ -1,5 +1,5 @@
 require_relative "piece.rb"
-
+require 'byebug'
 class Board
   attr_accessor :grid
 
@@ -64,7 +64,40 @@ class Board
     puts
   end
 
+  def dup_board
+    new_board = Board.new(populate = false)
 
+    8.times do |row|
+      8.times do |col|
+        unless (@grid[row][col]).nil?
+          old_piece = @grid[row][col]
+          new_board[[row, col]] = Piece.new([row, col], old_piece.color, new_board)
+        end
+      end
+    end
+
+    new_board.render
+  end
+
+  def valid_move_sequence?(move_sequence)
+
+    begin
+
+      until move_sequence.size == 1
+        #byebug
+        start_pos = move_sequence.shift
+        y, x = start_pos
+        (@grid[y][x]).perform_move!(move_sequence.first)
+        render
+      end
+
+    rescue InvalidMoveError => e
+      puts "#{e} can't do that"
+      return false
+    end
+
+    true
+  end
 
 end
 
@@ -72,7 +105,7 @@ a = Board.new
 #a.render
 #p a.[[0, 1]].nil?
 #p a.valid_move?([-1,0])
-#p a.square_empty?[0,1]
+
 a.render
 a[[2,0]].perform_slide([3,1])
 a.render
@@ -82,3 +115,11 @@ a[[5,1]].perform_jump([3,3])
 a.render
 a[[2,2]].perform_jump([4,4])
 a.render
+a[[1,1]].perform_slide([2,2])
+a.render
+puts
+p a.dup_board
+
+#p a.valid_move_sequence?([[5,5],[3,3], [1,1]])
+#a[[5, 5]].perform_move!([3,3])
+#a.render
