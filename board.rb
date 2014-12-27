@@ -76,19 +76,18 @@ class Board
       end
     end
 
-    new_board.render
+    new_board
   end
 
   def valid_move_sequence?(move_sequence)
 
+    new_board = dup_board
     begin
 
       until move_sequence.size == 1
-        #byebug
         start_pos = move_sequence.shift
         y, x = start_pos
-        (@grid[y][x]).perform_move!(move_sequence.first)
-        render
+        (new_board.grid[y][x]).perform_move!(move_sequence.first)
       end
 
     rescue InvalidMoveError => e
@@ -99,12 +98,24 @@ class Board
     true
   end
 
+  def perform_moves(move_sequence)
+    move_seq_copy = move_sequence.dup
+
+    if valid_move_sequence?(move_seq_copy)
+      until move_sequence.size == 1
+        start_pos = move_sequence.shift
+        y, x = start_pos
+        (@grid[y][x]).perform_move!(move_sequence.first)
+      end
+    else
+      raise InvalidMoveError
+    end
+
+  end
+
 end
 
 a = Board.new
-#a.render
-#p a.[[0, 1]].nil?
-#p a.valid_move?([-1,0])
 
 a.render
 a[[2,0]].perform_slide([3,1])
@@ -118,8 +129,5 @@ a.render
 a[[1,1]].perform_slide([2,2])
 a.render
 puts
-p a.dup_board
-
-#p a.valid_move_sequence?([[5,5],[3,3], [1,1]])
-#a[[5, 5]].perform_move!([3,3])
-#a.render
+p a.perform_moves([[5,5],[3,3], [1,1]])
+a.render

@@ -27,15 +27,6 @@ class Piece
     else
       raise InvalidMoveError
     end
-    #
-    # move_sequence.each do |start_pos, end_pos|
-    #   if @grid[start_pos].perform_slide(end_pos) # if this is true next
-    #   elsif @grid[start_pos].perform_jump(end_pos) # if this is true next
-    #   else
-    #     raise InvalidMoveError
-    #   end
-    # end
-    # puts "sequence properly executed"
   end
 
 
@@ -116,5 +107,3 @@ end
 
 
 #if time use colorize gem
-
-#puts " before slide my position is #{@pos}"
